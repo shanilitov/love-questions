@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="he">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>משחק זוגי - שאלות היכרות</title>
+  <title>שאלון זוגי עמוק</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(145deg, #ffe4ec, #e0f7fa);
       margin: 0;
-      padding: 0;
-      height: 100vh;
+      padding-bottom: 120px; /* רווח מתחתית עבור הכפתורים */
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -27,6 +27,7 @@
       max-width: 500px;
       text-align: center;
       transition: all 0.3s ease;
+      margin-top: 30px;
     }
 
     .card:hover {
@@ -46,29 +47,55 @@
       line-height: 1.5;
     }
 
-    .buttons {
-      margin-top: 25px;
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
+    .top-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 
-    button {
-      background-color: #ffb6b9;
-      border: none;
-      color: white;
-      padding: 12px 24px;
-      border-radius: 12px;
-      font-size: 1em;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-      width: 120px;
-    }
+.bottom-buttons {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 20px;
+  background: transparent;
+  z-index: 1000;
+}
 
-    button:hover {
-      background-color: #ff8a8d;
-    }
+button {
+  background-color: #ffb6b9;
+  border: none;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  min-width: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button:hover {
+  background-color: #ff8a8d;
+}
+
+.whatsapp-icon {
+  width: 18px;
+  height: 18px;
+  margin-left: 6px;
+}
+
+
+    
 
     @media (max-width: 480px) {
       #question {
@@ -80,8 +107,8 @@
       }
 
       button {
-        width: 100px;
-        font-size: 0.9em;
+        min-width: 110px;
+        font-size: 0.95em;
       }
 
       .card {
@@ -97,17 +124,22 @@
     <div class="expansion" id="expansion"></div>
   </div>
 
-  <div class="buttons">
-    <button onclick="prevQuestion()">קודם</button>
-    <button onclick="nextQuestion()">הבא</button>
+  <div class="top-buttons">
+	<button onclick="prevQuestion()">קודם</button>
+	<button onclick="nextQuestion()">הבא</button>
   </div>
-  <div class="buttons">
-    <button onclick="randomQuestion()">שאלה אקראית</button>
-    <button onclick="shareToWhatsApp()">שתף בוואטסאפ</button>
+  
+  <div class="bottom-buttons">
+	<button onclick="randomQuestion()">שאלה אקראית</button>
+	<button onclick="shareToWhatsApp()">
+		<img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="whatsapp" class="whatsapp-icon">
+		שתף בוואטסאפ
+	</button>
   </div>
 
+
   <script>
-     const questions = [
+    const questions = [
       { question: "זיכרון ילדות", expansion: "איזה זיכרון מהילדות שלך מזכיר לך את הרגעים בהם הרגשת שמחה אמיתית, ואיך הוא משפיע עליך היום?" },
       { question: "חוויה כואבת בילדות", expansion: "איזו חוויה קשה מהילדות עיצבה אותך עד היום, ואיך היא משפיעה על הבחירות שאתה עושה?" },
       { question: "השפעת ההורים", expansion: "איך היחסים עם ההורים עיצבו את האישיות והערכים שלך, ומה למדת מהם שמשפיע עליך עד כה?" },
@@ -144,41 +176,40 @@
 
     let currentIndex = 0;
 
-  function updateQuestion() {
-    const q = questions[currentIndex];
-    document.getElementById("question").textContent = q.question;
-    document.getElementById("expansion").textContent = q.expansion;
-  }
+    function updateQuestion() {
+      const q = questions[currentIndex];
+      document.getElementById("question").textContent = q.question;
+      document.getElementById("expansion").textContent = q.expansion;
+    }
 
-  function nextQuestion() {
-    if (currentIndex < questions.length - 1) {
-      currentIndex++;
+    function nextQuestion() {
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        updateQuestion();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateQuestion();
+      }
+    }
+
+    function randomQuestion() {
+      const randomIndex = Math.floor(Math.random() * questions.length);
+      currentIndex = randomIndex;
       updateQuestion();
     }
-  }
 
-  function prevQuestion() {
-    if (currentIndex > 0) {
-      currentIndex--;
-      updateQuestion();
+    function shareToWhatsApp() {
+      const q = questions[currentIndex];
+      const text = `💬 ${q.question}\n${q.expansion}`;
+      const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+      window.open(url, '_blank');
     }
-  }
 
-  function randomQuestion() {
-    const randomIndex = Math.floor(Math.random() * questions.length);
-    currentIndex = randomIndex;
-    updateQuestion();
-  }
-
-  function shareToWhatsApp() {
-    const q = questions[currentIndex];
-    const text = `${q.question}\n${q.expansion}`;
-    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
-  }
-
-  window.onload = updateQuestion;
-</script>
+    window.onload = updateQuestion;
   </script>
 </body>
 </html>
