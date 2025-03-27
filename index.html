@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>משחק זוגי - שאלות היכרות</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(145deg, #ffe4ec, #e0f7fa);
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      direction: rtl;
+    }
+
+    .card {
+      background-color: #ffffffdd;
+      padding: 30px 20px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    #question {
+      font-size: 1.4em;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .expansion {
+      font-size: 0.95em;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .buttons {
+      margin-top: 25px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      background-color: #ffb6b9;
+      border: none;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      width: 120px;
+    }
+
+    button:hover {
+      background-color: #ff8a8d;
+    }
+
+    @media (max-width: 480px) {
+      #question {
+        font-size: 1.2em;
+      }
+
+      .expansion {
+        font-size: 0.85em;
+      }
+
+      button {
+        width: 100px;
+        font-size: 0.9em;
+      }
+
+      .card {
+        padding: 25px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div id="question">טוען שאלה...</div>
+    <div class="expansion" id="expansion"></div>
+  </div>
+
+  <div class="buttons">
+    <button onclick="prevQuestion()">קודם</button>
+    <button onclick="nextQuestion()">הבא</button>
+  </div>
+
+  <script>
+     const questions = [
+      { question: "זיכרון ילדות", expansion: "איזה זיכרון מהילדות שלך מזכיר לך את הרגעים בהם הרגשת שמחה אמיתית, ואיך הוא משפיע עליך היום?" },
+      { question: "חוויה כואבת בילדות", expansion: "איזו חוויה קשה מהילדות עיצבה אותך עד היום, ואיך היא משפיעה על הבחירות שאתה עושה?" },
+      { question: "השפעת ההורים", expansion: "איך היחסים עם ההורים עיצבו את האישיות והערכים שלך, ומה למדת מהם שמשפיע עליך עד כה?" },
+      { question: "דמות משמעותית בילדות", expansion: "איזו דמות בילדותך השאירה עליך חותם עמוק, ומה לקח/ת ממנה לעתיד?" },
+      { question: "שינוי בדרך הגדילה", expansion: "אם הייתה לך אפשרות לשנות משהו בדרך שבה גדלת, מה היית משנה ולמה?" },
+      { question: "מכתב לעצמך בגיל 15", expansion: "מה היית אומר/ת לעצמך בגיל 15, ואילו עצות היית רוצה לשמוע מהגרסה הצעירה שלך?" },
+      { question: "התבטאות בכעס", expansion: "מתי הייתה הפעם האחרונה שהרגשת צורך להתבטא בכעס, ומה למדת מהתגובה שלך?" },
+      { question: "תחושת אהבה וביטחון", expansion: "איזה מעשה או מילה גורמים לך להרגיש באמת אהוב/ת ובטוח/ה, ואיך זה משפיע על התחושה הפנימית שלך?" },
+      { question: "התעוררות רגשות כלפי בן/בת הזוג", expansion: "איזו חוויה או רגע מסוים גרמו לך להרגיש שתחילת רגשות עמוקים כלפי (אני/אותי) התחילה להתעורר, ומה בדיוק קרה?" },
+      { question: "מעשה אהבה בלתי נשכח", expansion: "איזה מעשה אהבה שעשה עבורך מישהו השפיע עליך בצורה עמוקה, ומה גרם לכך שהוא זכור לך כל כך?" },
+      { question: "החלום הגדול", expansion: "מהו החלום המשמעותי ביותר שלך, ואילו צעדים אתה חושב שצריך לעשות כדי להתקרב אליו?" },
+      { question: "יעדים בחיים", expansion: "אם נדרשת לבחור שלושה יעדים מרכזיים בחיים, מה הם ולמה הם חשובים לך כל כך?" },
+      { question: "חזון לעתיד הזוגי", expansion: "איך אתה מדמיין את מערכת היחסים שלנו משתנה ומתפתחת בעשור הקרוב? מהם המרכיבים החשובים עבורך?" },
+      { question: "חיים ללא מגבלות כספיות", expansion: "איך היית מעצב/ת את חייך אם כסף לא היה מגבלה, ואילו חלומות היית מממש/ת?" },
+      { question: "חלום שוויתרת עליו", expansion: "האם יש חלום שהיה פעם קרוב לליבך אך ויתרת עליו? מהם הגורמים שהובילו לכך?" },
+      { question: "כותרת לספר חייך", expansion: "אם היית כותב/ת כותרת לספר על חייך, מה היית כותב/ת וכיצד היא משקפת את הדרך שעברת?" },
+      { question: "תשוקה עמוקה", expansion: "מהי התשוקה העמוקה ביותר שלך, ואיך היא משפיעה על הבחירות והפעולות שאתה נוקט?" },
+      { question: "ניסיון שמעורר פחד", expansion: "איזה ניסיון או חוויה שתמיד רצית לחוות אך חש/ה חשש מלצעוד לעברו? מה עומד מאחוריו?" },
+      { question: "שינוי עצמי לשיפור", expansion: "מהו השינוי הפנימי או ההתנהגותי שאתה מאמין שישדרג אותך לגרסה הכי טובה של עצמך, ולמה?" },
+      { question: "מיליון דולר – שינוי חיים", expansion: "אם היית מקבל/ת מיליון דולר ללא הגבלות, איך היית משקיע/ה בהם ומה היית משנה בחייך?" },
+      { question: "מחוות שמרגישות אהבה", expansion: "איזה סוג של מחוות או התנהגויות גורמים לך להרגיש באמת אהוב/ת, ואיך זה משפיע על תחושת הערך העצמית שלך?" },
+      { question: "תגובה לרגשות כעס", expansion: "כשאת/ה חווה כעס או תסכול, איך אתה מתמודד ואילו שיטות עזרו לך בעבר להרגיע את עצמך?" },
+      { question: "רגע משמח משותף", expansion: "איזה זיכרון משותף בינינו גורם לך לחייך בכל פעם, ומה המשמעות שלו עבורך?" },
+      { question: "פתרון קונפליקטים בזוגיות", expansion: "אילו דרכים אתה מאמין שיכולות לפתור מחלוקות בצורה בונה בזוגיות, ואילו שיטות הוכיחו את עצמן עבורך?" },
+      { question: "תחושת ביטחון בזמנים קשים", expansion: "מה יכול לעזור לך להרגיש יותר בטוח/ה ותומך/ת בזמן משבר, ואילו מילים או מעשים מחזקים אותך במיוחד?" },
+      { question: "חיבור עמוק בינינו", expansion: "תאר/י את הרגע שבו הרגשת שהקשר בינינו התעצם בצורה עמוקה – מה קרה ומה גרם לך להרגיש את זה?" },
+      { question: "ייחודיות הקשר", expansion: "מהו הדבר שאתה מוצא הכי ייחודי ומיוחד בקשר שלנו, ואיך הוא משפיע על התחושות שלך כלפינו?" },
+      { question: "רגע מצחיק בלתי נשכח", expansion: "איזה סיטואציה מצחיקה במיוחד זכורה לך, ואיך היא משפיעה על מצב הרוח שלך גם היום?" },
+      { question: "טיול חלומי זוגי", expansion: "אם היית בוחר את היעד המושלם לטיול זוגי, לאן היית רוצה שנלך ולמה המקום הזה מושך אותך?" },
+      { question: "כישרון או תחביב סודי", expansion: "האם יש לך כישרון, תחביב או תכונה מיוחדת שעדיין לא חלקת איתי? מהו ואיך הוא משפיע עליך?" },
+      { question: "הרפתקה מטורפת יחד", expansion: "אם לא הייתה כל מגבלה, איזו הרפתקה או ניסיון מטורף היית רוצה לחוות יחד איתי, ומה מושך אותך דווקא ברעיון הזה?" },
+      { question: "תחושות אחרי השאלון", expansion: "אחרי כל השאלות העמוקות האלה, איך אתה מרגיש פנימית? אילו מחשבות או רגשות עלו לך בעקבות השיתוף?" }
+    ];
+
+    let currentIndex = 0;
+
+    function updateQuestion() {
+      const q = questions[currentIndex];
+      document.getElementById("question").textContent = q.question;
+      document.getElementById("expansion").textContent = q.expansion;
+    }
+
+    function nextQuestion() {
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        updateQuestion();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateQuestion();
+      }
+    }
+
+    window.onload = updateQuestion;
+  </script>
+</body>
+</html>
